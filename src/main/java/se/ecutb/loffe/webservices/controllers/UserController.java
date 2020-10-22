@@ -3,6 +3,7 @@ package se.ecutb.loffe.webservices.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import se.ecutb.loffe.webservices.entities.User;
 import se.ecutb.loffe.webservices.services.UserService;
@@ -34,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> save(@RequestBody User user) {
+    public ResponseEntity<User> save(@Validated @RequestBody User user) {
         return ResponseEntity.ok(userService.save(user));
     }
 
@@ -49,7 +50,7 @@ public class UserController {
     // Detta är ett annat:
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUSer(@PathVariable String id, @RequestBody User user) {
+    public void updateUser(@PathVariable String id, @Validated @RequestBody User user) {
         userService.update(id, user);
     }
 
