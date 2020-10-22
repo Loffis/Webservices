@@ -2,6 +2,9 @@ package se.ecutb.loffe.webservices.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,8 +24,10 @@ public class UserService {
     //private UserRepository userRepository;
     private final UserRepository userRepository;
 
+    @Cacheable(value = "userCache")
     public List<User> findAll(String name, boolean sort) {
         log.info("Request to find all users.");
+        log.warn("Fresh data coming from the db!");
         //return userRepository.findAll();
         var users = userRepository.findAll();
         if (name != null) {
@@ -40,6 +45,7 @@ public class UserService {
         return users;
     }
 
+    @Cacheable(value = "userCache", key = "#id")
     public User findById(String id) {
         /* Olika sätt att kolla om user existerar
         var userOptional = userRepository.findById(id);
@@ -58,15 +64,18 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(RuntimeException::new);
          */
 
+        log.warn("Here it comes from the db!");
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         String.format("Could not find the user by id %s.", id)));
     }
 
+    @CachePut(value = "userCache", key = "result.id") // result är ett reserverat ord!
     public User save(User user) {
         return userRepository.save(user);
     }
 
+    @CachePut(value = "userCache", key = "#id")
     public void update(String id, User user) {
         if (!userRepository.existsById(id)) {
             log.error(String.format("Could not find the user by id %s.", id));
@@ -82,6 +91,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @CacheEvict(value = "userCache", key = "#id")
     public void delete(String id) {
         if (!userRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND,

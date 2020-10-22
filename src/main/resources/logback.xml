@@ -245,7 +245,7 @@
         <appender-ref ref="CONSOLE"/>
     </root>
     ​
-    <logger name="se.ecutb.loffe" level="info">
+    <logger name="se.ecutb.loffe.webservices" level="info">
         <appender-ref ref="USER_INFO" />
         <appender-ref ref="USER_WARN" />
         <appender-ref ref="USER_ERROR" />
