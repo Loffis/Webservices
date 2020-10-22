@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.time.LocalDate;
 
+@Data
 public class User {
 
     @Id
